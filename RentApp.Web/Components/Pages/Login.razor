@@ -1,4 +1,7 @@
 ﻿@page "/"
+@rendermode RenderMode.InteractiveServer
+@inherits LoginRazorComponent
+@inject NavigationManager Navigation
 
 <RadzenRow Gap="0" class="rz-my-12 rz-mx-auto rz-border-radius-6 rz-shadow-10" Style="width: 100%; max-width: 1200px; overflow: hidden;">
     <RadzenColumn Size="12" SizeMD="6">
@@ -13,13 +16,12 @@
             <RadzenText TextStyle="TextStyle.H5" TagName="TagName.H2" class="rz-mb-6">
                 Login
             </RadzenText>
-            <RadzenTemplateForm Data=@("SimpleLogin") Action="http://www.google.com">
-                <RadzenLogin AllowRegister="true" AllowResetPassword="false" />
+            <RadzenTemplateForm Data=@("SimpleLogin") >
+                <RadzenLogin AllowRegister="true"
+                            AllowResetPassword="false"
+                            Login=@(args => OnLogin(args))
+                            Register=@(args => OnRegister(Navigation)) />
             </RadzenTemplateForm>
         </RadzenCard>
     </RadzenColumn>
 </RadzenRow>
-
-@code {
-
-}
