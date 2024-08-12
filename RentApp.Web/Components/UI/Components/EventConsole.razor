@@ -1,6 +1,9 @@
+@using Microsoft.JSInterop
 @using Radzen
 @using System.Text.Json
+@using Radzen.Blazor
 @inject IJSRuntime JSRuntime
+
 <RadzenCard Variant="Variant.Outlined" class="rz-mt-4">
     <RadzenStack Orientation="Orientation.Vertical" Gap="0.5rem" @attributes=@Attributes>
         <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">

@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Radzen;
 
-namespace RentApp.Web.Components.Pages;
+namespace RentApp.Web.Components.UI.View.Login;
 
 public class LoginRazorComponent : ComponentBase
 {

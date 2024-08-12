@@ -1,5 +1,9 @@
 using Radzen;
 using RentApp.Web;
+using RentApp.Web.Components.Adapters;
+using RentApp.Web.Components.Data.DriverProfile.DataSource;
+using RentApp.Web.Components.Features.SignUp.Gateway;
+using RentApp.Web.Components.Features.SignUp.ViewModel;
 using RentApp.Web.Components;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,7 +24,17 @@ builder.Services.AddHttpClient<WeatherApiClient>(client =>
         client.BaseAddress = new("https+http://apiservice");
     });
 
+builder.Services.AddHttpClient<DriverProfileRemoteDataSource>(client =>
+    {
+        // This URL uses "https+http://" to indicate HTTPS is preferred over HTTP.
+        // Learn more about service discovery scheme resolution at https://aka.ms/dotnet/sdschemes.
+        client.BaseAddress = new("https+http://apiservice");
+    });
+
 builder.Services.AddRadzenComponents();
+
+builder.Services.AddScoped<ISignUpViewModel, SignUpViewModel>();
+builder.Services.AddTransient<ISignUpGateway, DriverProfileRepository>();
 
 var app = builder.Build();
 
