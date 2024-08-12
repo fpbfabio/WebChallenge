@@ -1,9 +1,8 @@
-using System.ComponentModel;
-using RentApp.Web.Components.Features.SignUp.Model;
+using RentApp.Web.Components.Core;
 
-namespace RentApp.Web.Components.Features.SignUp.ViewModel;
+namespace RentApp.Web.Components.Features.RegisterProfile.ViewModel;
 
-public interface ISignUpViewModel : INotifyPropertyChanged
+public interface IRegisterProfileViewModel : IAuthViewModelBase
 {
     public string Name { set; get; }
 

@@ -1,7 +1,7 @@
-namespace RentApp.Web.Components.Features.SignUp.Model;
+namespace RentApp.Web.Components.Features.RegisterProfile.Model;
 
 
-public record SignUpModel
+public record RegisterProfileModel
 (
     string Name = "",
     string CompanyCode = "",

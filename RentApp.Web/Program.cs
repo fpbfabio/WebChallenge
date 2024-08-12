@@ -2,9 +2,14 @@ using Radzen;
 using RentApp.Web;
 using RentApp.Web.Components.Adapters;
 using RentApp.Web.Components.Data.DriverProfile.DataSource;
-using RentApp.Web.Components.Features.SignUp.Gateway;
-using RentApp.Web.Components.Features.SignUp.ViewModel;
 using RentApp.Web.Components;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using System.IdentityModel.Tokens.Jwt;
+using RentApp.Web.Components.Features.Interfaces;
+using RentApp.Web.Components.Features.RegisterProfile.ViewModel;
+using RentApp.Web.Components.Features.Rent.ViewModel;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,10 +36,27 @@ builder.Services.AddHttpClient<DriverProfileRemoteDataSource>(client =>
         client.BaseAddress = new("https+http://apiservice");
     });
 
+builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
+                .AddKeycloakOpenIdConnect(
+                    "keycloak", 
+                    realm: "rentapp", 
+                    options =>
+                    {
+                        options.ClientId = "webfrontend";
+                        options.ResponseType = OpenIdConnectResponseType.Code;
+                        options.RequireHttpsMetadata = false;
+                        options.TokenValidationParameters.NameClaimType = JwtRegisteredClaimNames.Name;
+                        options.SaveTokens = true;
+                        options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    })
+                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme);
+builder.Services.AddCascadingAuthenticationState();
+
 builder.Services.AddRadzenComponents();
 
-builder.Services.AddScoped<ISignUpViewModel, SignUpViewModel>();
-builder.Services.AddTransient<ISignUpGateway, DriverProfileRepository>();
+builder.Services.AddScoped<IRentViewModel, RentViewModel>();
+builder.Services.AddScoped<IRegisterProfileViewModel, RegisterProfileViewModel>();
+builder.Services.AddTransient<IDriverProfileGateway, DriverProfileRepository>();
 
 var app = builder.Build();
 

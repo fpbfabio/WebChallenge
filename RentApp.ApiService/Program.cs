@@ -22,7 +22,7 @@ app.UseExceptionHandler();
 app.MapGet("/driverprofiles", async (DriverProfileDb db) =>
     await db.Items.ToListAsync());
 
-app.MapGet("/driverprofiles/{id}", async (int id, DriverProfileDb db) =>
+app.MapGet("/driverprofiles/{id}", async (string id, DriverProfileDb db) =>
     await db.Items.FindAsync(id)
         is DriverProfile profile
             ? Results.Ok(profile)
@@ -36,7 +36,7 @@ app.MapPost("/driverprofiles", async (DriverProfile profile, DriverProfileDb db)
     return Results.Created($"/driverprofiles/{profile.Id}", profile);
 });
 
-app.MapPut("/driverprofiles/{id}", async (int id, DriverProfile inputProfile, DriverProfileDb db) =>
+app.MapPut("/driverprofiles/{id}", async (string id, DriverProfile inputProfile, DriverProfileDb db) =>
 {
     var profile = await db.Items.FindAsync(id);
 
@@ -49,7 +49,7 @@ app.MapPut("/driverprofiles/{id}", async (int id, DriverProfile inputProfile, Dr
     return Results.NoContent();
 });
 
-app.MapDelete("/driverprofiles/{id}", async (int id, DriverProfileDb db) =>
+app.MapDelete("/driverprofiles/{id}", async (string id, DriverProfileDb db) =>
 {
     if (await db.Items.FindAsync(id) is DriverProfile todo)
     {
@@ -61,29 +61,6 @@ app.MapDelete("/driverprofiles/{id}", async (int id, DriverProfileDb db) =>
     return Results.NotFound();
 });
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-});
-
 app.MapDefaultEndpoints();
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

@@ -6,10 +6,8 @@ namespace RentApp.ApiService.Models;
 [Table("driver_profile")]
 public class DriverProfile
 {
-    [Column("_id")]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    [Key]
-    public Guid Id { get; set; }
+    [Key, Column("_id")]
+    public string? Id { get; set; }
     [Column("name")]
     public string? Name { get; set; }
     [Column("company_code")]

@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 namespace RentApp.Web.Components.Core;
 
-public abstract class ViewModelBase : INotifyPropertyChanged
+public abstract class ViewModelBase : IViewModelBase
 {
     private bool isBusy = false;
 
@@ -16,7 +16,11 @@ public abstract class ViewModelBase : INotifyPropertyChanged
         }
     }
 
+    public required Action<string> NavigateTo { get; set; }
+
     public event PropertyChangedEventHandler? PropertyChanged;
+
+    public virtual void OnInitialized() {}
 
     protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
     {
