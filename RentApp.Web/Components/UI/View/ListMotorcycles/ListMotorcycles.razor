@@ -1,0 +1,70 @@
+@using RentApp.Web.Components.Core
+@using RentApp.Web.Components.Features.ListMotorcycles.Model
+@using RentApp.Web.Components.Features.ListMotorcycles.ViewModel
+@using System.ComponentModel
+
+@rendermode RenderMode.InteractiveServer
+
+@inherits AuthRazorBase<IListMotorcyclesViewModel>
+
+<RadzenStack Gap="1rem">
+    <RadzenDataGrid @ref="radzenDataGrid" AllowFiltering="true" AllowColumnResize="true" 
+        FilterMode="FilterMode.Simple" PageSize="5" AllowPaging="true" AllowSorting="true" Data="@ViewModel.Model.MotorcycleItemModels" ColumnWidth="300px"
+        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" LogicalFilterOperator="LogicalFilterOperator.And">
+        <Columns>
+            <RadzenDataGridColumn Property="@nameof(MotorcycleItemModel.LicensePlate)" Filterable="true" Title="Plate">
+                <EditTemplate Context="itemModel">
+                    <RadzenTextBox @bind-Value="ViewModel.EditingLicensePlate" Style="width:200px; display: block" Name="Plate" aria-label="Enter plate" />
+                    <RadzenRequiredValidator Text="Plate is required" Component="Plate" Popup="true" />
+                </EditTemplate>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn Property="@nameof(MotorcycleItemModel.Identifier)" Filterable="false" Title="Identifier" />
+            <RadzenDataGridColumn Property="@nameof(MotorcycleItemModel.ModelName)" Filterable="false" Title="Model Name" />
+            <RadzenDataGridColumn Property="@nameof(MotorcycleItemModel.Year)" Filterable="false" Title="Year" />
+            <RadzenDataGridColumn Context="itemModel" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Frozen="true" Title="Actions" FrozenPosition="FrozenColumnPosition.Right">
+                <Template Context="itemModel">
+                    <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@(args => EditRow(itemModel))" @onclick:stopPropagation="true">
+                    </RadzenButton>
+                    <RadzenButton  Icon="delete" ButtonStyle="ButtonStyle.Danger" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" class="rz-my-1 rz-ms-1" Click="@(args => DeleteRow(itemModel))" @onclick:stopPropagation="true">
+                    </RadzenButton>
+                </Template>
+                <EditTemplate Context="itemModel">
+                    <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@((args) => SaveRow(itemModel))" aria-label="Save">
+                    </RadzenButton>
+                    <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" class="rz-my-1 rz-ms-1" Click="@((args) => CancelEdit(itemModel))" aria-label="Cancel">
+                    </RadzenButton>
+                    <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" class="rz-my-1 rz-ms-1" Click="@(args => DeleteRow(itemModel))" aria-label="Delete">
+                    </RadzenButton>
+                </EditTemplate>
+            </RadzenDataGridColumn>
+        </Columns>
+    </RadzenDataGrid>
+</RadzenStack>
+
+@code
+{
+    RadzenDataGrid<MotorcycleItemModel> radzenDataGrid;
+
+    async Task EditRow(MotorcycleItemModel itemModel)
+    {
+        ViewModel.EditingLicensePlate = itemModel.LicensePlate;
+        await radzenDataGrid.EditRow(itemModel);
+    }
+
+    async Task DeleteRow(MotorcycleItemModel itemModel)
+    {
+        ViewModel.Delete(itemModel);
+        await radzenDataGrid.Reload();
+    }
+
+    async Task SaveRow(MotorcycleItemModel itemModel)
+    {
+        ViewModel.Edit(itemModel);
+        await radzenDataGrid.UpdateRow(itemModel);
+    }
+
+    void CancelEdit(MotorcycleItemModel order)
+    {
+        radzenDataGrid.CancelEditRow(order);
+    }
+}

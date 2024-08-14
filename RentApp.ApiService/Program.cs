@@ -21,6 +21,11 @@ builder.Services.AddHttpClient<PlanApiClient>(client =>
     client.BaseAddress = new("https+http://planapi");
 });
 
+builder.Services.AddHttpClient<MotorcycleApiClient>(client =>
+{
+    client.BaseAddress = new("https+http://motorcycleapi");
+});
+
 // Add services to the container.
 builder.Services.AddProblemDetails();
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
@@ -32,6 +37,7 @@ app.UseExceptionHandler();
 app.RegisterDriverEndpoints();
 app.RegisterPlanEndpoints();
 app.RegisterRentalEndpoints();
+app.RegisterMotorcycleEndpoints();
 
 app.MapDefaultEndpoints();
 

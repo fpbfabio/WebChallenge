@@ -9,6 +9,12 @@ using RentApp.Web.Components.Features.RegisterProfile.ViewModel;
 using RentApp.Web.Components.Features.Rent.ViewModel;
 using RentApp.Web.Components.Data.Repositories;
 using RentApp.Web.Components.Data.Source;
+using RentApp.Web.Components.Features.RegisterMotorcycle.ViewModel;
+using RentApp.Web.Components.Features.ListMotorcycles.ViewModel;
+
+// This URL uses "https+http://" to indicate HTTPS is preferred over HTTP.
+// Learn more about service discovery scheme resolution at https://aka.ms/dotnet/sdschemes.
+const string API_SERVICE_BASE_ADDRESS = "https+http://apiservice";
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,25 +28,24 @@ builder.Services.AddRazorComponents()
 builder.Services.AddOutputCache();
 
 builder.Services.AddHttpClient<DriverProfileRemoteDataSource>(client =>
-    {
-        // This URL uses "https+http://" to indicate HTTPS is preferred over HTTP.
-        // Learn more about service discovery scheme resolution at https://aka.ms/dotnet/sdschemes.
-        client.BaseAddress = new("https+http://apiservice");
-    });
+{
+    client.BaseAddress = new(API_SERVICE_BASE_ADDRESS);
+});
 
 builder.Services.AddHttpClient<PlanRemoteDataSource>(client =>
-    {
-        // This URL uses "https+http://" to indicate HTTPS is preferred over HTTP.
-        // Learn more about service discovery scheme resolution at https://aka.ms/dotnet/sdschemes.
-        client.BaseAddress = new("https+http://apiservice");
-    });
+{
+    client.BaseAddress = new(API_SERVICE_BASE_ADDRESS);
+});
 
 builder.Services.AddHttpClient<RentalRemoteDataSource>(client =>
-    {
-        // This URL uses "https+http://" to indicate HTTPS is preferred over HTTP.
-        // Learn more about service discovery scheme resolution at https://aka.ms/dotnet/sdschemes.
-        client.BaseAddress = new("https+http://apiservice");
-    });
+{
+    client.BaseAddress = new(API_SERVICE_BASE_ADDRESS);
+});
+
+builder.Services.AddHttpClient<MotorcycleRemoteDataSource>(client =>
+{
+    client.BaseAddress = new(API_SERVICE_BASE_ADDRESS);
+});
 
 builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
                 .AddKeycloakOpenIdConnect(
@@ -62,9 +67,12 @@ builder.Services.AddRadzenComponents();
 builder.Services.AddTransient<IDriverProfileGateway, DriverProfileRepository>();
 builder.Services.AddTransient<IPlanGateway, PlanRepository>();
 builder.Services.AddTransient<IRentalGateway, RentalRepository>();
+builder.Services.AddTransient<IMotorcycleGateway, MotorcycleRepository>();
 
 builder.Services.AddScoped<IRentViewModel, RentViewModel>();
 builder.Services.AddScoped<IRegisterProfileViewModel, RegisterProfileViewModel>();
+builder.Services.AddScoped<IRegisterMotorcycleViewModel, RegisterMotorcycleViewModel>();
+builder.Services.AddScoped<IListMotorcyclesViewModel, ListMotorcyclesViewModel>();
 
 var app = builder.Build();
 

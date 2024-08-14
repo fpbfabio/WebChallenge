@@ -1,6 +1,69 @@
+using Microsoft.EntityFrameworkCore;
+using RentApp.BackDataModelLib;
+using RentApp.MotorcycleApi.Contexts;
+using RentApp.MotorcycleApi.Converter;
+using RentApp.MotorcycleApi.Models;
+
+const string CONNECTION_STRING = "mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.2.15";
+const string PATH = "/motorcycleapi";
+
 var builder = WebApplication.CreateBuilder(args);
+
+// Add service defaults & Aspire components.
+builder.AddServiceDefaults();
+
+// Add services to the container.
+builder.Services.AddProblemDetails();
+builder.Services.AddDbContext<MotorcycleDb>(opt =>
+    opt.UseMongoDB(CONNECTION_STRING, "rent_app"));
+builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 var app = builder.Build();
 
-app.MapGet("/", () => "Hello World!");
+// Configure the HTTP request pipeline.
+app.UseExceptionHandler();
+
+app.MapGet(PATH, async (MotorcycleDb db) =>
+    await db.Items.ToListAsync());
+
+app.MapGet(PATH + "/{id}", async (string id, MotorcycleDb db) =>
+    await db.Items.FindAsync(id)
+        is MotorcycleDatabaseModel motorcycle
+            ? Results.Ok(motorcycle)
+            : Results.NotFound());
+
+app.MapPost(PATH, async (MotorcycleApiDataModel motorcycle, MotorcycleDb db) =>
+{
+    db.Items.Add(ModelConverter.ToDatabaseModel(motorcycle));
+    await db.SaveChangesAsync();
+
+    return Results.Created($"{PATH}/{motorcycle.LicensePlate}", motorcycle);
+});
+
+app.MapPut(PATH, async (MotorcycleApiDataModel inputMotorcycle, MotorcycleDb db) =>
+{
+    var motorcycle = await db.Items.FindAsync(inputMotorcycle.LicensePlate);
+
+    if (motorcycle is null) return Results.NotFound();
+
+    motorcycle.LicensePlate = inputMotorcycle.LicensePlate;
+
+    await db.SaveChangesAsync();
+
+    return Results.NoContent();
+});
+
+app.MapDelete(PATH + "/{id}", async (string id, MotorcycleDb db) =>
+{
+    if (await db.Items.FindAsync(id) is MotorcycleDatabaseModel todo)
+    {
+        db.Items.Remove(todo);
+        await db.SaveChangesAsync();
+        return Results.NoContent();
+    }
+
+    return Results.NotFound();
+});
+
+app.MapDefaultEndpoints();
 
 app.Run();

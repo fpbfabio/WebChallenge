@@ -1,0 +1,72 @@
+@using RentApp.Web.Components.Core
+@using RentApp.Web.Components.Features.RegisterMotorcycle.ViewModel
+@using RentApp.Web.Components.Features.RegisterProfile.ViewModel
+@using System.ComponentModel
+
+@rendermode RenderMode.InteractiveServer
+
+@inherits AuthRazorBase<IRegisterMotorcycleViewModel>
+
+<RadzenStack Gap="0">
+    <RadzenRow Gap="2rem" class="rz-p-0 rz-p-lg-4">
+        <RadzenColumn Size="12" SizeMD="6">
+            <RadzenStack>
+            <RadzenFieldset Text="Informações da Moto">
+                <RadzenStack  Gap="1rem">
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="12" SizeMD="4">
+                        <RadzenLabel Text="Identificador" Component="Identificador"/>
+                    </RadzenColumn>
+                    <RadzenColumn Size="12" SizeMD="8">
+                        <RadzenTextBox Style="width: 100%;"
+                            Name="Identificador"
+                            Placeholder="Moto 01"
+                            @bind-Value="ViewModel.Identifier" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="12" SizeMD="4">
+                        <RadzenLabel Text="Modelo" Component="Modelo" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="12" SizeMD="8">
+                        <RadzenTextBox
+                            Style="width: 100%;"
+                            Name="Modelo"
+                            Placeholder="Kawasaki GPZ 900R Ninja"
+                            @bind-Value="ViewModel.ModelName" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="12" SizeMD="4">
+                        <RadzenLabel Text="Modelo" Component="Modelo" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="12" SizeMD="8">
+                        <RadzenDatePicker
+                            Style="width: 100%;"
+                            Name="Model"
+                            @bind-Value="ViewModel.Year"
+                            DateFormat="yyyy" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow AlignItems="AlignItems.Center">
+                    <RadzenColumn Size="12" SizeMD="4">
+                        <RadzenLabel Text="Placa" Component="Placa" />
+                    </RadzenColumn>
+                    <RadzenColumn Size="12" SizeMD="8">
+                        <RadzenTextBox
+                            Style="width: 100%;"
+                            Name="Placa"
+                            Placeholder="XXXXXXXXXXX"
+                            @bind-Value="ViewModel.LicensePlate" />
+                    </RadzenColumn>
+                </RadzenRow>
+                </RadzenStack>
+            </RadzenFieldset>
+            </RadzenStack>
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenStack Orientation="Orientation.Horizontal" class="rz-p-0 rz-p-lg-4">
+        <RadzenButton ButtonType="ButtonType.Submit" Size="ButtonSize.Large" Icon="save" Text="Save" Click="ViewModel.Save" />
+        <RadzenButton ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Large" Icon="cancel" Text="Cancel" />
+    </RadzenStack>
+</RadzenStack>
