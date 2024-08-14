@@ -8,9 +8,42 @@
 @using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.Identity.Web
 @using RentApp.Web.Components.Core
+@using RentApp.Web.Components.Features.Rent.Model
 @using RentApp.Web.Components.Features.Rent.ViewModel
 
-
-<div class="rz-m-12">
-    <RadzenProgressBar Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate" />
-</div>
+@if (ViewModel.Model.State == RentState.Loading)
+{
+    <div class="rz-m-12">
+        <RadzenProgressBar Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate" />
+    </div>
+}
+else if (ViewModel.Model.State == RentState.ShowForm)
+{
+    <RadzenStack Orientation="Orientation.Vertical"
+                Gap="100px"
+                JustifyContent="JustifyContent.Center"
+                AlignItems="AlignItems.Center"
+                Wrap="FlexWrap.NoWrap"
+                class="rz-p-12"
+                Style="height: 100%">
+        <RadzenText TextStyle="TextStyle.DisplayH2">Escolha um plano</RadzenText>
+        <RadzenRadioButtonList Data="@ViewModel.Model.AvailablePlans"
+                        Orientation="Orientation.Vertical"
+                        @bind-Value=@ViewModel.SelectedPlan
+                        TValue="PlanModel"
+                        TextProperty="Description" />
+        <RadzenButton Click=@(args => ViewModel.StartNewRental()) Text="Iniciar locação" ButtonStyle="ButtonStyle.Primary" />
+    </RadzenStack>
+}
+else if (ViewModel.Model.State == RentState.RentalActive)
+{
+    <RadzenStack Orientation="Orientation.Vertical"
+            Gap="100px"
+            JustifyContent="JustifyContent.Center"
+            AlignItems="AlignItems.Center"
+            Wrap="FlexWrap.NoWrap"
+            class="rz-p-12"
+            Style="height: 100%">
+        <RadzenText TextStyle="TextStyle.DisplayH2">Aluguel em andamento</RadzenText>
+    </RadzenStack>
+}

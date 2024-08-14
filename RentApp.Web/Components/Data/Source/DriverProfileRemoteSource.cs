@@ -1,6 +1,6 @@
-using RentApp.Web.Components.Data.DriverProfile.Model;
+using RentApp.FrontDataModelLib;
 
-namespace RentApp.Web.Components.Data.DriverProfile.DataSource;
+namespace RentApp.Web.Components.Data.Source;
 
 
 public class DriverProfileRemoteDataSource(HttpClient httpClient)
@@ -25,7 +25,7 @@ public class DriverProfileRemoteDataSource(HttpClient httpClient)
     }
 
     public async void RegisterDriverProfileAsync(
-        DriverProfileData driverProfile,
+        DriverProfile driverProfile,
         Action onSuccess,
         Action<string>? onError = null,
         CancellationToken cancellationToken = default)

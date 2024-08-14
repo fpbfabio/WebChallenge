@@ -12,6 +12,10 @@
   <ItemGroup>
     <ProjectReference Include="..\RentApp.ApiService\RentApp.ApiService.csproj" />
     <ProjectReference Include="..\RentApp.Web\RentApp.Web.csproj" />
+    <ProjectReference Include="..\RentApp.PlanApi\RentApp.PlanApi.csproj" />
+    <ProjectReference Include="..\RentApp.RentalApi\RentApp.RentalApi.csproj" />
+    <ProjectReference Include="..\RentApp.DriverApi\RentApp.DriverApi.csproj" />
+    <ProjectReference Include="..\RentApp.MotorcycleApi\RentApp.MotorcycleApi.csproj" />
   </ItemGroup>
 
   <ItemGroup>

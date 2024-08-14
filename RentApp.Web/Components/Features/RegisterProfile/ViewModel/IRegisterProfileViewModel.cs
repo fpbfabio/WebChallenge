@@ -15,5 +15,6 @@ public interface IRegisterProfileViewModel : IAuthViewModelBase
     public string Category { set; get; }
 
     public List<string> Options { get; }
+
     public void Save();
 }

@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RentApp.ServiceDefaults\RentApp.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\RentApp.BackDataModelLib\RentApp.BackDataModelLib.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.7" />
+    <PackageReference Include="MongoDB.EntityFrameworkCore" Version="8.0.3" />
+  </ItemGroup>
+
+</Project>

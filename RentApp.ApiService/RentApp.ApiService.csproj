@@ -8,6 +8,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\RentApp.ServiceDefaults\RentApp.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\RentApp.FrontDataModelLib\RentApp.FrontDataModelLib.csproj" />
+    <ProjectReference Include="..\RentApp.BackDataModelLib\RentApp.BackDataModelLib.csproj" />
   </ItemGroup>
 
   <ItemGroup>

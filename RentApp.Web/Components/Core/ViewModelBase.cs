@@ -5,18 +5,8 @@ namespace RentApp.Web.Components.Core;
 
 public abstract class ViewModelBase : IViewModelBase
 {
-    private bool isBusy = false;
-
-    public bool IsBusy
-    {
-        get => isBusy;
-        set
-        {
-            SetValue(ref isBusy, value);
-        }
-    }
-
-    public required Action<string> NavigateTo { get; set; }
+    public required Action<string> NavigateTo { protected get; set; }
+    public required Action<string> Notify { protected get; set; }
 
     public event PropertyChangedEventHandler? PropertyChanged;
 

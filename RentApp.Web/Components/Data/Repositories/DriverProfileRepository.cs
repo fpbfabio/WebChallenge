@@ -1,18 +1,18 @@
-using RentApp.Web.Components.Data.DriverProfile.DataSource;
-using RentApp.Web.Components.Data.DriverProfile.Model;
 using RentApp.Web.Components.Features.Interfaces;
 using RentApp.Web.Components.Features.RegisterProfile.Model;
+using RentApp.FrontDataModelLib;
+using RentApp.Web.Components.Data.Source;
 
-namespace RentApp.Web.Components.Adapters;
+namespace RentApp.Web.Components.Data.Repositories;
 
 
 public class DriverProfileRepository(DriverProfileRemoteDataSource driverProfileRemoteDataSource) : IDriverProfileGateway
 {
     private DriverProfileRemoteDataSource DriverProfileRemoteDataSource => driverProfileRemoteDataSource;
 
-    private static DriverProfileData MapRegisterProfileModelToDriverProfileData(RegisterProfileModel model)
+    private static DriverProfile MapToDriverProfileData(RegisterProfileModel model)
     {
-        return new DriverProfileData
+        return new DriverProfile
         {
             Name = model.Name,
             CompanyCode = model.CompanyCode,
@@ -27,12 +27,10 @@ public class DriverProfileRepository(DriverProfileRemoteDataSource driverProfile
         DriverProfileRemoteDataSource.ProfileExists(id, onResult, onError);
     }
 
-    public void RegisterProfile(string id, RegisterProfileModel model)
+    public void RegisterProfile(string id, RegisterProfileModel model, Action onResult, Action<string> onError)
     {
-        DriverProfileData driverProfileData = MapRegisterProfileModelToDriverProfileData(model);
+        DriverProfile driverProfileData = MapToDriverProfileData(model);
         driverProfileData.Id = id;
-        DriverProfileRemoteDataSource.RegisterDriverProfileAsync(driverProfileData, () => {
-            Console.WriteLine("User signed up");
-        });
+        DriverProfileRemoteDataSource.RegisterDriverProfileAsync(driverProfileData, onResult, onError);
     }
 }

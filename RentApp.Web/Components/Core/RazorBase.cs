@@ -1,10 +1,12 @@
 using System.ComponentModel;
 using Microsoft.AspNetCore.Components;
+using Radzen;
 
 namespace RentApp.Web.Components.Core;
 
 public class RazorBase<T> : ComponentBase, IDisposable where T : IViewModelBase
 {
+    [Inject] public NotificationService? NotificationService { init; get; }
     [Inject] public required NavigationManager NavigationManager { init; get; }
     [Inject] public required T ViewModel { init; get; }
 
@@ -18,6 +20,7 @@ public class RazorBase<T> : ComponentBase, IDisposable where T : IViewModelBase
             });
         };
         await base.OnInitializedAsync();
+        ViewModel.Notify = Notify; 
         ViewModel.NavigateTo = NavigateTo; 
         ViewModel.OnInitialized();
     }
@@ -28,6 +31,16 @@ public class RazorBase<T> : ComponentBase, IDisposable where T : IViewModelBase
         {
             StateHasChanged();
         });
+    }
+
+    private void Notify(string s)
+    {
+        NotificationService?.Notify(
+            new NotificationMessage {
+                Severity = NotificationSeverity.Info,
+                Summary = "Info",
+                Detail = s,
+                Duration = 4000 });
     }
 
     private void NavigateTo(string s)

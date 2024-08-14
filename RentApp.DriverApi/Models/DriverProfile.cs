@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace RentApp.ApiService.Models;
+namespace RentApp.DriverApi.Models;
 
 [Table("driver_profile")]
 public class DriverProfile

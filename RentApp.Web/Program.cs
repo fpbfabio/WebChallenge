@@ -1,7 +1,4 @@
 using Radzen;
-using RentApp.Web;
-using RentApp.Web.Components.Adapters;
-using RentApp.Web.Components.Data.DriverProfile.DataSource;
 using RentApp.Web.Components;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
@@ -10,6 +7,8 @@ using System.IdentityModel.Tokens.Jwt;
 using RentApp.Web.Components.Features.Interfaces;
 using RentApp.Web.Components.Features.RegisterProfile.ViewModel;
 using RentApp.Web.Components.Features.Rent.ViewModel;
+using RentApp.Web.Components.Data.Repositories;
+using RentApp.Web.Components.Data.Source;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,14 +21,21 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddOutputCache();
 
-builder.Services.AddHttpClient<WeatherApiClient>(client =>
+builder.Services.AddHttpClient<DriverProfileRemoteDataSource>(client =>
     {
         // This URL uses "https+http://" to indicate HTTPS is preferred over HTTP.
         // Learn more about service discovery scheme resolution at https://aka.ms/dotnet/sdschemes.
         client.BaseAddress = new("https+http://apiservice");
     });
 
-builder.Services.AddHttpClient<DriverProfileRemoteDataSource>(client =>
+builder.Services.AddHttpClient<PlanRemoteDataSource>(client =>
+    {
+        // This URL uses "https+http://" to indicate HTTPS is preferred over HTTP.
+        // Learn more about service discovery scheme resolution at https://aka.ms/dotnet/sdschemes.
+        client.BaseAddress = new("https+http://apiservice");
+    });
+
+builder.Services.AddHttpClient<RentalRemoteDataSource>(client =>
     {
         // This URL uses "https+http://" to indicate HTTPS is preferred over HTTP.
         // Learn more about service discovery scheme resolution at https://aka.ms/dotnet/sdschemes.
@@ -53,10 +59,12 @@ builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
 builder.Services.AddCascadingAuthenticationState();
 
 builder.Services.AddRadzenComponents();
+builder.Services.AddTransient<IDriverProfileGateway, DriverProfileRepository>();
+builder.Services.AddTransient<IPlanGateway, PlanRepository>();
+builder.Services.AddTransient<IRentalGateway, RentalRepository>();
 
 builder.Services.AddScoped<IRentViewModel, RentViewModel>();
 builder.Services.AddScoped<IRegisterProfileViewModel, RegisterProfileViewModel>();
-builder.Services.AddTransient<IDriverProfileGateway, DriverProfileRepository>();
 
 var app = builder.Build();
 

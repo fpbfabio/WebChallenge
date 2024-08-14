@@ -81,7 +81,8 @@ public class RegisterProfileViewModel(IDriverProfileGateway profileGateway) : Au
         }
     }
 
-    public List<string> Options => [
+    public List<string> Options =>
+    [
         "A",
         "B",
         "A+B",
@@ -89,11 +90,12 @@ public class RegisterProfileViewModel(IDriverProfileGateway profileGateway) : Au
 
     public void Save()
     {
-        Console.WriteLine("Name: " + RegisterProfileModel.Name);
-        Console.WriteLine("CNPJ: " + RegisterProfileModel.CompanyCode);
-        Console.WriteLine("BirthDate: " + RegisterProfileModel.BirthDate);
-        Console.WriteLine("Category: " + RegisterProfileModel.Category);
-        Console.WriteLine("DriverLicenseCode: " + RegisterProfileModel.DriverLicenseCode);
-        DriverProfileGateway.RegisterProfile(GetUserId(), RegisterProfileModel);
+        DriverProfileGateway.RegisterProfile(GetUserId(), RegisterProfileModel, () =>
+        {
+            NavigateTo("/");
+        }, (s) =>
+        {
+            Console.WriteLine("Error at RegisterProfileViewModel.Save: " + s);
+        });
     }
 }

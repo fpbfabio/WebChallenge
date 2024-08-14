@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using RentApp.ApiService.Models;
+using RentApp.DriverApi.Models;
 
-namespace RentApp.ApiService.Contexts;
+namespace RentApp.DriverApi.Contexts;
 
 public class DriverProfileDb(DbContextOptions<DriverProfileDb> options) : DbContext(options)
 {

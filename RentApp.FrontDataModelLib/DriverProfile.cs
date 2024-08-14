@@ -1,6 +1,7 @@
-namespace RentApp.Web.Components.Data.DriverProfile.Model;
+namespace RentApp.FrontDataModelLib;
 
-public class DriverProfileData
+
+public class DriverProfile
 {
     public string? Id { get; set; }
     public string? Name { get; set; }
