@@ -1,18 +1,30 @@
 @page "/"
 
+@using Microsoft.AspNetCore.Components.Authorization
+@using RentApp.Web.Components.UI.View.Forbidden
 @using RentApp.Web.Components.UI.View.ListMotorcycles
+@using RentApp.Web.Components.UI.View.Loading
 @using RentApp.Web.Components.UI.View.RegisterMotorcycle
 
 @rendermode RenderMode.InteractiveServer
 
-
-<RadzenTabs TabPosition="TabPosition.Left" RenderMode="TabRenderMode.Client" >
-    <Tabs>
-        <RadzenTabsItem Text="Register">
-            <RegisterMotorcycle />
-        </RadzenTabsItem>
-        <RadzenTabsItem Text="List">
-            <ListMotorcycles />
-        </RadzenTabsItem>
-    </Tabs>
-</RadzenTabs>
+<AuthorizeView Roles="Admin">
+    <Authorized>
+        <RadzenTabs TabPosition="TabPosition.Left" RenderMode="TabRenderMode.Client" >
+            <Tabs>
+                <RadzenTabsItem Text="Register">
+                    <RegisterMotorcycle />
+                </RadzenTabsItem>
+                <RadzenTabsItem Text="List">
+                    <ListMotorcycles />
+                </RadzenTabsItem>
+            </Tabs>
+        </RadzenTabs>
+    </Authorized>
+    <Authorizing>
+        <LoadingProgress />
+    </Authorizing>
+    <NotAuthorized>
+        <Forbidden />
+    </NotAuthorized>
+</AuthorizeView>

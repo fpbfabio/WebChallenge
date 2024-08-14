@@ -10,46 +10,58 @@
 @using RentApp.Web.Components.Core
 @using RentApp.Web.Components.Features.Rent.Model
 @using RentApp.Web.Components.Features.Rent.ViewModel
+@using RentApp.Web.Components.UI.View.Forbidden
+@using RentApp.Web.Components.UI.View.Loading
 
-@if (ViewModel.Model.State == RentState.Loading)
-{
-    <div class="rz-m-12">
-        <RadzenProgressBar Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate" />
-    </div>
-}
-else if (ViewModel.Model.State == RentState.ShowForm)
-{
-    <RadzenStack Orientation="Orientation.Vertical"
-                Gap="100px"
+<AuthorizeView Roles="Driver">
+    <Authorized>
+    @if (ViewModel.Model.State == RentState.Loading)
+    {
+        <div class="rz-m-12">
+            <RadzenProgressBar Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate" />
+        </div>
+    }
+    else if (ViewModel.Model.State == RentState.ShowForm)
+    {
+        <RadzenStack Orientation="Orientation.Vertical"
+                    Gap="100px"
+                    JustifyContent="JustifyContent.Center"
+                    AlignItems="AlignItems.Center"
+                    Wrap="FlexWrap.NoWrap"
+                    class="rz-p-12"
+                    Style="height: 100%">
+            <RadzenText TextStyle="TextStyle.DisplayH2">Escolha um plano</RadzenText>
+            <RadzenRadioButtonList Data="@ViewModel.Model.AvailablePlans"
+                            Orientation="Orientation.Vertical"
+                            @bind-Value=@ViewModel.SelectedPlan
+                            TValue="PlanModel"
+                            TextProperty="Description" />
+            <RadzenButton Click=@(args => ViewModel.StartNewRental()) Text="Iniciar locação" ButtonStyle="ButtonStyle.Primary" />
+        </RadzenStack>
+    }
+    else if (ViewModel.Model.State == RentState.RentalActive)
+    {
+        <RadzenStack Orientation="Orientation.Vertical"
+                Gap="50px"
                 JustifyContent="JustifyContent.Center"
                 AlignItems="AlignItems.Center"
                 Wrap="FlexWrap.NoWrap"
                 class="rz-p-12"
                 Style="height: 100%">
-        <RadzenText TextStyle="TextStyle.DisplayH2">Escolha um plano</RadzenText>
-        <RadzenRadioButtonList Data="@ViewModel.Model.AvailablePlans"
-                        Orientation="Orientation.Vertical"
-                        @bind-Value=@ViewModel.SelectedPlan
-                        TValue="PlanModel"
-                        TextProperty="Description" />
-        <RadzenButton Click=@(args => ViewModel.StartNewRental()) Text="Iniciar locação" ButtonStyle="ButtonStyle.Primary" />
-    </RadzenStack>
-}
-else if (ViewModel.Model.State == RentState.RentalActive)
-{
-    <RadzenStack Orientation="Orientation.Vertical"
-            Gap="50px"
-            JustifyContent="JustifyContent.Center"
-            AlignItems="AlignItems.Center"
-            Wrap="FlexWrap.NoWrap"
-            class="rz-p-12"
-            Style="height: 100%">
-        <RadzenText TextStyle="TextStyle.DisplayH2">Aluguel em andamento</RadzenText>
-        <RadzenStack Gap="50px">
-            <RadzenLabel Text="Informe uma data para o fim da locação" Component="DatePickerDateOnlyType" />
-            <RadzenDatePicker @bind-Value="@ViewModel.EndDate" DateFormat="dd/MM/yyyy" Name="DatePickerDateOnlyType"/>
-            <RadzenText TextStyle="TextStyle.Body1">Preço: @(ViewModel.Price ?? "-- --")</RadzenText>
-            <RadzenButton Click=@(args => ViewModel.EndRental()) Text="Encerrar locação" ButtonStyle="ButtonStyle.Primary" />
+            <RadzenText TextStyle="TextStyle.DisplayH2">Aluguel em andamento</RadzenText>
+            <RadzenStack Gap="50px">
+                <RadzenLabel Text="Informe uma data para o fim da locação" Component="DatePickerDateOnlyType" />
+                <RadzenDatePicker @bind-Value="@ViewModel.EndDate" DateFormat="dd/MM/yyyy" Name="DatePickerDateOnlyType"/>
+                <RadzenText TextStyle="TextStyle.Body1">Preço: @(ViewModel.Price ?? "-- --")</RadzenText>
+                <RadzenButton Click=@(args => ViewModel.EndRental()) Text="Encerrar locação" ButtonStyle="ButtonStyle.Primary" />
+            </RadzenStack>
         </RadzenStack>
-    </RadzenStack>
-}
+    }
+    </Authorized>
+    <Authorizing>
+        <LoadingProgress />
+    </Authorizing>
+    <NotAuthorized>
+        <Forbidden />
+    </NotAuthorized>
+</AuthorizeView>

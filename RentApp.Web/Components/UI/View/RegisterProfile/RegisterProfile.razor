@@ -1,96 +1,109 @@
 ﻿@page "/register"
 
+@using Microsoft.AspNetCore.Components.Authorization
 @using RentApp.Web.Components.Core
 @using RentApp.Web.Components.Features.RegisterProfile.ViewModel
 @using System.ComponentModel
+@using RentApp.Web.Components.UI.View.Forbidden
+@using RentApp.Web.Components.UI.View.Loading
 
 @rendermode RenderMode.InteractiveServer
 
 @inherits AuthRazorBase<IRegisterProfileViewModel>
 
-<RadzenRow Gap="2rem" class="rz-p-0 rz-p-lg-4">
-    <RadzenColumn Size="12" SizeMD="6">
-        <RadzenStack>
-        <RadzenFieldset Text="Informações Pessoais">
-            <RadzenStack  Gap="1rem">
-            <RadzenRow AlignItems="AlignItems.Center">
-                <RadzenColumn Size="12" SizeMD="4">
-                    <RadzenLabel Text="Nome" Component="Name"/>
-                </RadzenColumn>
-                <RadzenColumn Size="12" SizeMD="8">
-                    <RadzenTextBox Style="width: 100%;"
-                        Name="Name"
-                        Placeholder="Pedro Silva"
-                        @bind-Value="ViewModel.Name" />
-                </RadzenColumn>
-            </RadzenRow>
-            <RadzenRow AlignItems="AlignItems.Center">
-                <RadzenColumn Size="12" SizeMD="4">
-                    <RadzenLabel Text="CNPJ" Component="CNPJ" />
-                </RadzenColumn>
-                <RadzenColumn Size="12" SizeMD="8">
-                    <RadzenTextBox
-                        Style="width: 100%;"
-                        Name="CNPJ"
-                        Placeholder="XX.XXX.XXX/XXXX-XX"
-                        @bind-Value="ViewModel.CompanyCode" />
-                </RadzenColumn>
-            </RadzenRow>
-            <RadzenRow AlignItems="AlignItems.Center">
-                <RadzenColumn Size="12" SizeMD="4">
-                    <RadzenLabel Text="Data de Nascimento" Component="BirthDate" />
-                </RadzenColumn>
-                <RadzenColumn Size="12" SizeMD="8">
-                    <RadzenDatePicker
-                        Style="width: 100%;"
-                        Name="BirthDate"
-                        @bind-Value="ViewModel.BirthDate"
-                        DateFormat="dd/MM/yyyy" />
-                </RadzenColumn>
-            </RadzenRow>
-            <RadzenRow AlignItems="AlignItems.Center">
-                <RadzenColumn Size="12" SizeMD="4">
-                    <RadzenLabel Text="CNH" Component="DriverLicense" />
-                </RadzenColumn>
-                <RadzenColumn Size="12" SizeMD="8">
-                    <RadzenTextBox
-                        Style="width: 100%;"
-                        Name="DriverLicense"
-                        Placeholder="XXXXXXXXXXX"
-                        @bind-Value="ViewModel.DriverLicenseCode" />
-                </RadzenColumn>
-            </RadzenRow>
-            <RadzenRow AlignItems="AlignItems.Center">
-                <RadzenColumn Size="12" SizeMD="4">
-                    <RadzenLabel Text="Tipo de CNH" Component="DriverLicenseCategory" />
-                </RadzenColumn>
-                <RadzenColumn Size="12" SizeMD="8">
-                    <RadzenDropDown
-                        TValue="string"
-                        Data="ViewModel.Options"
-                        Style="width: 100%; max-width: 400px;"
-                        Name="DriverLicenseCategory"
-                        @bind-Value="ViewModel.Category" />
-                </RadzenColumn>
-            </RadzenRow>
-            <RadzenRow AlignItems="AlignItems.Center">
-                <RadzenColumn Size="12" SizeMD="4">
-                    <RadzenLabel Text="Arquivo CNH" Component="DriverLicenseFile" />
-                </RadzenColumn>
-                <RadzenColumn Size="12" SizeMD="8">
-                    <RadzenUpload
-                        Url="upload/single"
-                        Style="width: 100%"
-                        Name="DriverLicenseFile"
-                        InputAttributes="@(new Dictionary<string,object>(){ { "aria-label", "select file" }})"/>
-                </RadzenColumn>
-            </RadzenRow>
-            </RadzenStack>
-        </RadzenFieldset>
+<AuthorizeView Roles="Driver">
+    <Authorized>
+        <RadzenRow Gap="2rem" class="rz-p-0 rz-p-lg-4">
+            <RadzenColumn Size="12" SizeMD="6">
+                <RadzenStack>
+                <RadzenFieldset Text="Informações Pessoais">
+                    <RadzenStack  Gap="1rem">
+                    <RadzenRow AlignItems="AlignItems.Center">
+                        <RadzenColumn Size="12" SizeMD="4">
+                            <RadzenLabel Text="Nome" Component="Name"/>
+                        </RadzenColumn>
+                        <RadzenColumn Size="12" SizeMD="8">
+                            <RadzenTextBox Style="width: 100%;"
+                                Name="Name"
+                                Placeholder="Pedro Silva"
+                                @bind-Value="ViewModel.Name" />
+                        </RadzenColumn>
+                    </RadzenRow>
+                    <RadzenRow AlignItems="AlignItems.Center">
+                        <RadzenColumn Size="12" SizeMD="4">
+                            <RadzenLabel Text="CNPJ" Component="CNPJ" />
+                        </RadzenColumn>
+                        <RadzenColumn Size="12" SizeMD="8">
+                            <RadzenTextBox
+                                Style="width: 100%;"
+                                Name="CNPJ"
+                                Placeholder="XX.XXX.XXX/XXXX-XX"
+                                @bind-Value="ViewModel.CompanyCode" />
+                        </RadzenColumn>
+                    </RadzenRow>
+                    <RadzenRow AlignItems="AlignItems.Center">
+                        <RadzenColumn Size="12" SizeMD="4">
+                            <RadzenLabel Text="Data de Nascimento" Component="BirthDate" />
+                        </RadzenColumn>
+                        <RadzenColumn Size="12" SizeMD="8">
+                            <RadzenDatePicker
+                                Style="width: 100%;"
+                                Name="BirthDate"
+                                @bind-Value="ViewModel.BirthDate"
+                                DateFormat="dd/MM/yyyy" />
+                        </RadzenColumn>
+                    </RadzenRow>
+                    <RadzenRow AlignItems="AlignItems.Center">
+                        <RadzenColumn Size="12" SizeMD="4">
+                            <RadzenLabel Text="CNH" Component="DriverLicense" />
+                        </RadzenColumn>
+                        <RadzenColumn Size="12" SizeMD="8">
+                            <RadzenTextBox
+                                Style="width: 100%;"
+                                Name="DriverLicense"
+                                Placeholder="XXXXXXXXXXX"
+                                @bind-Value="ViewModel.DriverLicenseCode" />
+                        </RadzenColumn>
+                    </RadzenRow>
+                    <RadzenRow AlignItems="AlignItems.Center">
+                        <RadzenColumn Size="12" SizeMD="4">
+                            <RadzenLabel Text="Tipo de CNH" Component="DriverLicenseCategory" />
+                        </RadzenColumn>
+                        <RadzenColumn Size="12" SizeMD="8">
+                            <RadzenDropDown
+                                TValue="string"
+                                Data="ViewModel.Options"
+                                Style="width: 100%; max-width: 400px;"
+                                Name="DriverLicenseCategory"
+                                @bind-Value="ViewModel.Category" />
+                        </RadzenColumn>
+                    </RadzenRow>
+                    <RadzenRow AlignItems="AlignItems.Center">
+                        <RadzenColumn Size="12" SizeMD="4">
+                            <RadzenLabel Text="Arquivo CNH" Component="DriverLicenseFile" />
+                        </RadzenColumn>
+                        <RadzenColumn Size="12" SizeMD="8">
+                            <RadzenUpload
+                                Url="upload/single"
+                                Style="width: 100%"
+                                Name="DriverLicenseFile"
+                                InputAttributes="@(new Dictionary<string,object>(){ { "aria-label", "select file" }})"/>
+                        </RadzenColumn>
+                    </RadzenRow>
+                    </RadzenStack>
+                </RadzenFieldset>
+                </RadzenStack>
+            </RadzenColumn>
+        </RadzenRow>
+        <RadzenStack Orientation="Orientation.Horizontal" class="rz-p-0 rz-p-lg-4">
+            <RadzenButton ButtonType="ButtonType.Submit" Size="ButtonSize.Large" Icon="save" Text="Save" Click="ViewModel.Save" />
+            <RadzenButton ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Large" Icon="cancel" Text="Cancel" />
         </RadzenStack>
-    </RadzenColumn>
-</RadzenRow>
-<RadzenStack Orientation="Orientation.Horizontal" class="rz-p-0 rz-p-lg-4">
-    <RadzenButton ButtonType="ButtonType.Submit" Size="ButtonSize.Large" Icon="save" Text="Save" Click="ViewModel.Save" />
-    <RadzenButton ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Large" Icon="cancel" Text="Cancel" />
-</RadzenStack>
+    </Authorized>
+    <Authorizing>
+        <LoadingProgress />
+    </Authorizing>
+    <NotAuthorized>
+        <Forbidden />
+    </NotAuthorized>
+</AuthorizeView>
