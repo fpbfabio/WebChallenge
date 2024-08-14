@@ -1,4 +1,3 @@
-using System.Globalization;
 using RentApp.Web.Components.Data.Converters;
 using RentApp.Web.Components.Data.Source;
 using RentApp.Web.Components.Features.Interfaces;
@@ -30,8 +29,9 @@ public class RentalRepository(RentalRemoteDataSource rentalRemoteDataSource) : I
                 return;
             }
             RentalModel rentalModel = new(
+                Id:  data.Id,
                 SelectedPlan: PlanModelConverter.ToPlanModel(data.Plan),
-                StartDate: DateOnly.ParseExact(data.StartDate,  "yyyy.MM.dd", CultureInfo.InvariantCulture)
+                StartDate: DateOnly.FromDayNumber((int)data.StartDate)
             );
             onResult(rentalModel);
         }, onError);
@@ -46,5 +46,23 @@ public class RentalRepository(RentalRemoteDataSource rentalRemoteDataSource) : I
                 onResult(data != null);
             },
             onError: onError);
+    }
+
+    public void GetPriceForDate(string rentalId, DateOnly endDate, Action<float> onResult, Action<string> onError)
+    {
+        RentalDataSource.GetPriceForDate(
+            rentalId,
+            endDate.DayNumber,
+            onResult,
+            onError);
+    }
+
+    public void EndRental(string rentalId, DateOnly endDate, Action onResult, Action<string> onError)
+    {
+        RentalDataSource.EndRental(
+            rentalId,
+            endDate.DayNumber,
+            onResult,
+            onError);        
     }
 }

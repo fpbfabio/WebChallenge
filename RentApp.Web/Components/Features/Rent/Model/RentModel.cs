@@ -10,7 +10,9 @@ public enum RentState
 public record RentModel
 (
     List<PlanModel> AvailablePlans,
-    PlanModel? SelectedPlan,
-    DateOnly ExpectedEndDate,
-    RentState State = RentState.Loading
+    PlanModel? SelectedPlan = null,
+    RentState State = RentState.Loading,
+    string? Price = null,
+    DateOnly? EndDate = null,
+    string? ActiveRentalId = null
 );

@@ -13,7 +13,7 @@ public class RentalDatabaseModel
     [Column("plan_id")]
     public int PlanId { set; get; }
     [Column("start_date")]
-    public string? StartDate { set; get; }
+    public int? StartDate { set; get; }
     [Column("end_date")]
-    public string? EndDate { set; get; }
+    public int? EndDate { set; get; }
 }

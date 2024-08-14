@@ -1,5 +1,6 @@
 using RentApp.ApiService.Clients;
 using RentApp.ApiService.Converters;
+using RentApp.ApiService.Rules;
 using RentApp.BackDataModelLib;
 using RentApp.FrontDataModelLib;
 
@@ -12,7 +13,7 @@ public static class RentalEndpoints
 
     private static void RegisterStartRentalApi(WebApplication app)
     {
-        app.MapPost(ENDPOINT + "/{userId}/{planId}", async (string userId, int planId) =>
+        app.MapPost(ENDPOINT + "/start/{userId}/{planId}", async (string userId, int planId) =>
         {
             RentalApiClient? client = app.Services.GetService<RentalApiClient>();
             IResult result = TypedResults.Problem(detail: DEFAULT_ERROR_DETAIL);
@@ -32,9 +33,89 @@ public static class RentalEndpoints
         });
     }
 
+    private static void RegisterEndRentalApi(WebApplication app)
+    {
+        app.MapPost(ENDPOINT + "/end/{rentalId}/{date}", async (string rentalId, int date) =>
+        {
+            RentalApiClient? client = app.Services.GetService<RentalApiClient>();
+            IResult result = TypedResults.Problem(detail: DEFAULT_ERROR_DETAIL);
+            if (client is null)
+            {
+                Console.WriteLine("RentalEndpoints: RentalApiClient is null");
+                return result;
+            }
+            await client.EndRental(rentalId, date, () =>
+            {
+                result = TypedResults.Ok();
+            }, (s) =>
+            {
+                result = TypedResults.Problem(detail: s);
+            });
+            return result;
+        });
+    }
+
+    private static void RegisterGetPriceApi(WebApplication app)
+    {
+        app.MapGet(ENDPOINT + "/price/{rentalId}/{endDate}", async (string rentalId, int endDate) =>
+        {
+            RentalApiClient? client = app.Services.GetService<RentalApiClient>();
+            IResult result = TypedResults.Problem(detail: DEFAULT_ERROR_DETAIL);
+            if (client is null)
+            {
+                Console.WriteLine("RentalEndpoints: RentalApiClient is null");
+                return result;
+            }
+            RentalApiDataModel? rental = null;
+            await client.GetRental(rentalId, (rentalApiDataModel) =>
+            {
+                rental = rentalApiDataModel;
+            }, (s) =>
+            {
+                Console.WriteLine("RentalEndpoints: RegisterGetPriceApi failure");
+                result = TypedResults.Problem(detail: s);
+            });
+            if (rental is null)
+            {
+                Console.WriteLine("RentalEndpoints: NotFound");
+                result = TypedResults.NotFound();
+                return result;
+            }
+            PlanApiClient? planApiClient = app.Services.GetService<PlanApiClient>();
+            if (planApiClient is null)
+            {
+                Console.WriteLine("RentalEndpoints: PlanApiClient is null");
+                return result;
+            }
+            await planApiClient.GetPlan(rental.PlanId, (planApiDataModel) =>
+            {
+                if (planApiDataModel is null)
+                {
+                    result = TypedResults.NotFound();
+                    return;
+                }
+                if (rental.StartDate is null)
+                {
+                    return;
+                }
+                var price = PricingRules.CalculateCost(
+                    startDate: DateOnly.FromDayNumber((int) rental.StartDate),
+                    endDate: DateOnly.FromDayNumber(endDate),
+                    planApiDataModel: planApiDataModel
+                );
+                result = TypedResults.Ok(price);
+            }, (s) =>
+            {
+                Console.WriteLine("RentalEndpoints: RegisterGetPriceApi failure");
+                result = TypedResults.Problem(detail: s);
+            });
+            return result;
+        });
+    }
+
     private static void RegisterGetActiveRental(WebApplication app)
     {
-        app.MapGet(ENDPOINT + "/{userId}", async (string userId) =>
+        app.MapGet(ENDPOINT + "/active/{userId}", async (string userId) =>
         {
             Console.WriteLine("RentalEndpoints: GetActiveRental");
             RentalApiClient? client = app.Services.GetService<RentalApiClient>();
@@ -82,6 +163,7 @@ public static class RentalEndpoints
                 Plan plan = PlanConverter.ToFrontModel(planApiDataModel);
                 Rental rental = new()
                 {
+                    Id = activeRental.Id,
                     Plan = plan,
                     StartDate = activeRental.StartDate,
                 };
@@ -100,6 +182,8 @@ public static class RentalEndpoints
     public static void RegisterRentalEndpoints(this WebApplication app)
     {
         RegisterStartRentalApi(app);
+        RegisterEndRentalApi(app);
         RegisterGetActiveRental(app);
+        RegisterGetPriceApi(app);
     }
 }

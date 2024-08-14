@@ -7,5 +7,8 @@ public interface IRentViewModel : IAuthViewModelBase
 {
     RentModel Model { get; }
     PlanModel? SelectedPlan { set; get; }
+    DateOnly? EndDate { set; get; }
+    string? Price { get; }
     void StartNewRental();
+    void EndRental();
 }

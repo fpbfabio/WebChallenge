@@ -1,4 +1,3 @@
-using Microsoft.VisualBasic;
 using RentApp.BackDataModelLib;
 
 namespace RentApp.ApiService.Rules;
@@ -12,7 +11,11 @@ public static class PricingRules
 
     public static float CalculateCost(DateOnly startDate, DateOnly endDate, PlanApiDataModel planApiDataModel)
     {
-        var days = Math.Min(endDate.DayNumber - startDate.DayNumber, 1);
+        if (startDate.DayNumber > endDate.DayNumber)
+        {
+            return -1;
+        }
+        var days = Math.Max(endDate.DayNumber - startDate.DayNumber, 1);
         if (days > planApiDataModel.Days)
         {
             return CalculateDefaultCost(planApiDataModel) + (50 + planApiDataModel.PricePerDay) * (days - planApiDataModel.Days);

@@ -1,4 +1,3 @@
-using System.Globalization;
 using RentApp.BackDataModelLib;
 using RentApp.RentalApi.Models;
 
@@ -9,6 +8,7 @@ public static class ModelConverter
     public static RentalApiDataModel ToApiDataModel(RentalDatabaseModel databaseModel)
     {
         return new RentalApiDataModel {
+            Id = databaseModel.Id,
             PlanId = databaseModel.PlanId,
             StartDate = databaseModel.StartDate,
             EndDate = databaseModel.EndDate

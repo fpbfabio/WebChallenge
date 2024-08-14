@@ -16,7 +16,7 @@ public class RentalRemoteDataSource(HttpClient httpClient)
     {
         try
         {
-            var response = await httpClient.PostAsync($"{ENDPOINT}/{userId}/{planId}", null, cancellationToken);
+            var response = await httpClient.PostAsync($"{ENDPOINT}/start/{userId}/{planId}", null, cancellationToken);
             if (response.IsSuccessStatusCode)
             {
                 onSuccess();
@@ -40,7 +40,7 @@ public class RentalRemoteDataSource(HttpClient httpClient)
     {
         try
         {
-            var response = await httpClient.GetFromJsonAsync<Rental>($"{ENDPOINT}/{userId}",
+            var response = await httpClient.GetFromJsonAsync<Rental>($"{ENDPOINT}/active/{userId}",
                 cancellationToken);
             onResult(response);
         }
@@ -51,6 +51,51 @@ public class RentalRemoteDataSource(HttpClient httpClient)
                 onResult(null);
                 return;
             }
+            onError?.Invoke(exception.ToString());
+        }
+    }
+
+    public async void GetPriceForDate(
+        string rentalId,
+        int endDate,
+        Action<float> onResult,
+        Action<string> onError,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var response = await httpClient.GetFromJsonAsync<float>($"{ENDPOINT}/price/{rentalId}/{endDate}",
+                cancellationToken);
+            onResult(response);
+        }
+        catch (HttpRequestException exception)
+        {
+            onError?.Invoke(exception.ToString());
+        }
+    }
+
+    public async void EndRental(
+        string rentalId,
+        int date,
+        Action onResult,
+        Action<string> onError,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var response = await httpClient.PostAsync($"{ENDPOINT}/end/{rentalId}/{date}", null,
+                cancellationToken);
+            if (response.IsSuccessStatusCode)
+            {
+                onResult();
+            }
+            else if (response.ReasonPhrase != null && onError != null)
+            {
+                onError(response.ReasonPhrase);
+            }
+        }
+        catch (HttpRequestException exception)
+        {
             onError?.Invoke(exception.ToString());
         }
     }

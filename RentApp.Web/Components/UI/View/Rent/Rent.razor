@@ -38,12 +38,18 @@ else if (ViewModel.Model.State == RentState.ShowForm)
 else if (ViewModel.Model.State == RentState.RentalActive)
 {
     <RadzenStack Orientation="Orientation.Vertical"
-            Gap="100px"
+            Gap="50px"
             JustifyContent="JustifyContent.Center"
             AlignItems="AlignItems.Center"
             Wrap="FlexWrap.NoWrap"
             class="rz-p-12"
             Style="height: 100%">
         <RadzenText TextStyle="TextStyle.DisplayH2">Aluguel em andamento</RadzenText>
+        <RadzenStack Gap="50px">
+            <RadzenLabel Text="Informe uma data para o fim da locação" Component="DatePickerDateOnlyType" />
+            <RadzenDatePicker @bind-Value="@ViewModel.EndDate" DateFormat="dd/MM/yyyy" Name="DatePickerDateOnlyType"/>
+            <RadzenText TextStyle="TextStyle.Body1">Preço: @(ViewModel.Price ?? "-- --")</RadzenText>
+            <RadzenButton Click=@(args => ViewModel.EndRental()) Text="Encerrar locação" ButtonStyle="ButtonStyle.Primary" />
+        </RadzenStack>
     </RadzenStack>
 }

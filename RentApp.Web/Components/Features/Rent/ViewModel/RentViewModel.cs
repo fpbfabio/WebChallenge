@@ -14,7 +14,7 @@ public class RentViewModel(
     private IDriverProfileGateway ProfileGateway => profileGateway;
     private IPlanGateway PlanGateway => planGateway;
     private IRentalGateway RentalGateway => rentalGateway;
-    private RentModel model = new([], null, DateOnly.FromDateTime(DateTime.Now), RentState.Loading);
+    private RentModel model = new([]);
 
     public RentModel Model
     {
@@ -37,6 +37,25 @@ public class RentViewModel(
         }
     }
 
+    public DateOnly? EndDate
+    {
+        get => Model.EndDate;
+        set
+        {
+            Model = Model with { EndDate = value };
+            UpdatePrice();
+        }
+    }
+
+    public string? Price
+    {
+        get => Model.Price;
+        set
+        {
+            Model = Model with { Price = value };
+        }
+    }
+
     public override void OnAuthInitialized()
     {
         base.OnAuthInitialized();
@@ -55,16 +74,18 @@ public class RentViewModel(
 
     private void LoadRentalUI()
     {
-        Console.WriteLine("LoadRentalApi");
-        RentalGateway.HasActiveRental(GetUserId(), (rentalOnGoing) =>
+        RentalGateway.GetActiveUserRental(GetUserId(), (activeRental) =>
         {
-            Console.WriteLine("RentalOngoing: " + rentalOnGoing);
             PlanGateway.GetAvailablePlans(
             onResult: (plans) =>
             {
                 Model = Model with { AvailablePlans = plans };
-                if (rentalOnGoing)
-                    Model = Model with { State = RentState.RentalActive };
+                if (activeRental != null)
+                    Model = Model with
+                    {
+                        State = RentState.RentalActive,
+                        ActiveRentalId = activeRental.Id
+                    };
                 else
                     Model = Model with { State = RentState.ShowForm };
             },
@@ -88,5 +109,52 @@ public class RentViewModel(
             planModel: Model.SelectedPlan,
             onSuccess: LoadRentalUI,
             onError: (s) => Console.WriteLine());
+    }
+
+    private void UpdatePrice()
+    {
+        Price = null;
+        if (Model.EndDate is null || Model.ActiveRentalId is null)
+        {
+            LoadRentalUI();
+            return;
+        }
+        RentalGateway.GetPriceForDate(Model.ActiveRentalId, (DateOnly) Model.EndDate, (p) =>
+        {
+            if (p < 0)
+            {
+                Notify($"Data de fim precisa ser maior que a de inicio da locação");
+                Price = null;
+            }
+            else
+            {
+                Price = $"R$ {p}";
+            }
+        }, (s) =>
+        {
+            Console.WriteLine("RentViewModel: Error on UpdatePrice(): " + s);
+        });
+    }
+
+    public void EndRental()
+    {
+        if (Model.Price is null)
+        {
+            Notify($"Selecione uma data de fim para a locação");
+            return;
+        }
+        if (Model.EndDate is null || Model.ActiveRentalId is null)
+        {
+            LoadRentalUI();
+            return;
+        }
+        ShowLoading();
+        RentalGateway.EndRental(Model.ActiveRentalId, (DateOnly) Model.EndDate, () =>
+        {
+            LoadRentalUI();
+        }, (s) =>
+        {
+            Console.WriteLine("RentViewModel: Error on EndRental(): " + s);
+        });
     }
 }
