@@ -16,6 +16,7 @@
     <ProjectReference Include="..\RentApp.RentalApi\RentApp.RentalApi.csproj" />
     <ProjectReference Include="..\RentApp.DriverApi\RentApp.DriverApi.csproj" />
     <ProjectReference Include="..\RentApp.MotorcycleApi\RentApp.MotorcycleApi.csproj" />
+    <ProjectReference Include="..\MongoDb.Hosting\MongoDb.Hosting.csproj" IsAspireProjectResource="false" />
   </ItemGroup>
 
   <ItemGroup>

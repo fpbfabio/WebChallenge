@@ -4,7 +4,6 @@ using RentApp.MotorcycleApi.Contexts;
 using RentApp.MotorcycleApi.Converter;
 using RentApp.MotorcycleApi.Models;
 
-const string CONNECTION_STRING = "mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.2.15";
 const string PATH = "/motorcycleapi";
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,8 +13,12 @@ builder.AddServiceDefaults();
 
 // Add services to the container.
 builder.Services.AddProblemDetails();
-builder.Services.AddDbContext<MotorcycleDb>(opt =>
-    opt.UseMongoDB(CONNECTION_STRING, "rent_app"));
+string? connectionString = builder.Configuration.GetConnectionString("mongodb");
+if (connectionString != null)
+{
+    builder.Services.AddDbContext<MotorcycleDb>(opt =>
+        opt.UseMongoDB(connectionString, "rent_app"));
+}
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 var app = builder.Build();
 
