@@ -12,15 +12,15 @@
         FilterMode="FilterMode.Simple" PageSize="5" AllowPaging="true" AllowSorting="true" Data="@ViewModel.Model.MotorcycleItemModels" ColumnWidth="300px"
         FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" LogicalFilterOperator="LogicalFilterOperator.And">
         <Columns>
-            <RadzenDataGridColumn Property="@nameof(MotorcycleItemModel.LicensePlate)" Filterable="true" Title="Plate">
+            <RadzenDataGridColumn Property="@nameof(MotorcycleItemModel.LicensePlate)" Filterable="true" Title="Placa">
                 <EditTemplate Context="itemModel">
                     <RadzenTextBox @bind-Value="ViewModel.EditingLicensePlate" Style="width:200px; display: block" Name="Plate" aria-label="Enter plate" />
                     <RadzenRequiredValidator Text="Plate is required" Component="Plate" Popup="true" />
                 </EditTemplate>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn Property="@nameof(MotorcycleItemModel.Identifier)" Filterable="false" Title="Identifier" />
-            <RadzenDataGridColumn Property="@nameof(MotorcycleItemModel.ModelName)" Filterable="false" Title="Model Name" />
-            <RadzenDataGridColumn Property="@nameof(MotorcycleItemModel.Year)" Filterable="false" Title="Year" />
+            <RadzenDataGridColumn Property="@nameof(MotorcycleItemModel.Identifier)" Filterable="false" Title="Identificador" />
+            <RadzenDataGridColumn Property="@nameof(MotorcycleItemModel.ModelName)" Filterable="false" Title="Modelo" />
+            <RadzenDataGridColumn Property="@nameof(MotorcycleItemModel.Year)" Filterable="false" Title="Ano" />
             <RadzenDataGridColumn Context="itemModel" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Frozen="true" Title="Actions" FrozenPosition="FrozenColumnPosition.Right">
                 <Template Context="itemModel">
                     <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@(args => EditRow(itemModel))" @onclick:stopPropagation="true">

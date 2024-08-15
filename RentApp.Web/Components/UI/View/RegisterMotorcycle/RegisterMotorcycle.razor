@@ -38,14 +38,10 @@
                 </RadzenRow>
                 <RadzenRow AlignItems="AlignItems.Center">
                     <RadzenColumn Size="12" SizeMD="4">
-                        <RadzenLabel Text="Modelo" Component="Modelo" />
+                        <RadzenLabel Text="Ano" Component="Modelo" />
                     </RadzenColumn>
                     <RadzenColumn Size="12" SizeMD="8">
-                        <RadzenDatePicker
-                            Style="width: 100%;"
-                            Name="Model"
-                            @bind-Value="ViewModel.Year"
-                            DateFormat="yyyy" />
+                        <RadzenNumeric ShowUpDown="false" TValue="int?" @bind-Value=@ViewModel.Year Placeholder="XXXX" />
                     </RadzenColumn>
                 </RadzenRow>
                 <RadzenRow AlignItems="AlignItems.Center">

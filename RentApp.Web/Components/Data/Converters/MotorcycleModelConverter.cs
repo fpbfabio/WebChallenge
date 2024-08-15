@@ -14,7 +14,7 @@ public static class MotorcycleModelConverter
         {
             Identifier = model.Identifier,
             ModelName = model.ModelName,
-            Year = model.Year is DateOnly dateOnly ? dateOnly.Year : -1,
+            Year = model.Year is int year ? year : -1,
             LicensePlate = model.LicensePlate,
         };
     }
@@ -25,7 +25,7 @@ public static class MotorcycleModelConverter
         {
             Identifier = model.Identifier,
             ModelName = model.ModelName,
-            Year = model.Year is DateOnly dateOnly ? dateOnly.Year : -1,
+            Year =  model.Year is int year ? year : -1,
             LicensePlate = model.LicensePlate,
         };
     }
@@ -36,7 +36,7 @@ public static class MotorcycleModelConverter
         {
             Identifier = model.Identifier,
             ModelName = model.ModelName,
-            Year = model.Year > 0 ? new DateOnly(model.Year, 1, 1) : null,
+            Year = model.Year > 0 ? model.Year : null,
             LicensePlate = model.LicensePlate,
         };
     }

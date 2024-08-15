@@ -6,7 +6,7 @@ public interface IRegisterMotorcycleViewModel : IAuthViewModelBase
 {
     public string? Identifier { set; get; }
 
-    public DateOnly? Year { set; get; }
+    public int? Year { set; get; }
 
     public string? ModelName { set; get; }
 

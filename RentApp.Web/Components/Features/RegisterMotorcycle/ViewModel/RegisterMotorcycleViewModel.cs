@@ -31,7 +31,7 @@ public class RegisterMotorcycleViewModel(IMotorcycleGateway motorcycleGateway) :
         }
     }
 
-    public DateOnly? Year
+    public int? Year
     {
         get => Model.Year;
         set
