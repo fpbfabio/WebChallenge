@@ -43,28 +43,28 @@
 
 @code
 {
-    RadzenDataGrid<MotorcycleItemModel> radzenDataGrid;
+    RadzenDataGrid<MotorcycleItemModel>? radzenDataGrid;
 
     async Task EditRow(MotorcycleItemModel itemModel)
     {
         ViewModel.EditingLicensePlate = itemModel.LicensePlate;
-        await radzenDataGrid.EditRow(itemModel);
+        await radzenDataGrid!.EditRow(itemModel);
     }
 
     async Task DeleteRow(MotorcycleItemModel itemModel)
     {
         ViewModel.Delete(itemModel);
-        await radzenDataGrid.Reload();
+        await radzenDataGrid!.Reload();
     }
 
     async Task SaveRow(MotorcycleItemModel itemModel)
     {
         ViewModel.Edit(itemModel);
-        await radzenDataGrid.UpdateRow(itemModel);
+        await radzenDataGrid!.UpdateRow(itemModel);
     }
 
     void CancelEdit(MotorcycleItemModel order)
     {
-        radzenDataGrid.CancelEditRow(order);
+        radzenDataGrid!.CancelEditRow(order);
     }
 }

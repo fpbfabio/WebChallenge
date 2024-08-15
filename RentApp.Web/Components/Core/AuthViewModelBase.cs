@@ -5,6 +5,7 @@ public abstract class AuthViewModelBase : ViewModelBase, IAuthViewModelBase
 {
     public required Func<bool> IsUserAuthenticated { get ; set ; }
     public required Func<string> GetUserId { get ; set ; }
+    public required Func<string, bool> IsInRole { get; set ; }
 
     public virtual void OnAuthInitialized() {}
 }

@@ -11,6 +11,9 @@ using RentApp.Web.Components.Data.Repositories;
 using RentApp.Web.Components.Data.Source;
 using RentApp.Web.Components.Features.RegisterMotorcycle.ViewModel;
 using RentApp.Web.Components.Features.ListMotorcycles.ViewModel;
+using Microsoft.AspNetCore.Authentication;
+using RentApp.Web;
+using RentApp.Web.Components.Features.Home;
 
 // This URL uses "https+http://" to indicate HTTPS is preferred over HTTP.
 // Learn more about service discovery scheme resolution at https://aka.ms/dotnet/sdschemes.
@@ -59,9 +62,23 @@ builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
                         options.TokenValidationParameters.NameClaimType = JwtRegisteredClaimNames.Name;
                         options.SaveTokens = true;
                         options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                        options.SignOutScheme = OpenIdConnectDefaults.AuthenticationScheme;
+                        options.Events.OnSignedOutCallbackRedirect += context =>
+                        {
+                            context.Response.Redirect(context.Options.SignedOutRedirectUri);
+                            context.HandleResponse();
+                            return Task.CompletedTask;
+                        };
                     })
                 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme);
 builder.Services.AddCascadingAuthenticationState();
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 
 builder.Services.AddRadzenComponents();
 builder.Services.AddTransient<IDriverProfileGateway, DriverProfileRepository>();
@@ -73,6 +90,7 @@ builder.Services.AddScoped<IRentViewModel, RentViewModel>();
 builder.Services.AddScoped<IRegisterProfileViewModel, RegisterProfileViewModel>();
 builder.Services.AddScoped<IRegisterMotorcycleViewModel, RegisterMotorcycleViewModel>();
 builder.Services.AddScoped<IListMotorcyclesViewModel, ListMotorcyclesViewModel>();
+builder.Services.AddScoped<IHomeViewModel, HomeViewModel>();
 
 var app = builder.Build();
 
@@ -82,7 +100,6 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-
 app.UseHttpsRedirection();
 
 app.UseStaticFiles();
@@ -92,7 +109,8 @@ app.UseOutputCache();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
-
+app.UseSession();
 app.MapDefaultEndpoints();
+app.MapLoginAndLogout();
 
 app.Run();

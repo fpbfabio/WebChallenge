@@ -1,30 +1,35 @@
-@page "/"
+@page "/admin"
 
 @using Microsoft.AspNetCore.Components.Authorization
 @using RentApp.Web.Components.UI.View.Forbidden
 @using RentApp.Web.Components.UI.View.ListMotorcycles
 @using RentApp.Web.Components.UI.View.Loading
 @using RentApp.Web.Components.UI.View.RegisterMotorcycle
-
+@inject NavigationManager Navigation
 @rendermode RenderMode.InteractiveServer
-
-<AuthorizeView Roles="Admin">
-    <Authorized>
-        <RadzenTabs TabPosition="TabPosition.Left" RenderMode="TabRenderMode.Client" >
-            <Tabs>
-                <RadzenTabsItem Text="Register">
-                    <RegisterMotorcycle />
-                </RadzenTabsItem>
-                <RadzenTabsItem Text="List">
-                    <ListMotorcycles />
-                </RadzenTabsItem>
-            </Tabs>
-        </RadzenTabs>
-    </Authorized>
-    <Authorizing>
-        <LoadingProgress />
-    </Authorizing>
-    <NotAuthorized>
-        <Forbidden />
-    </NotAuthorized>
-</AuthorizeView>
+<RadzenStack Orientation="Orientation.Vertical" Gap="80px">
+    <AuthorizeView Roles="Admin">
+        <Authorized>
+            <RadzenStack Orientation="Orientation.Vertical" Gap="80px">
+                <RadzenText TextStyle="TextStyle.DisplayH2">Painel Administrativo</RadzenText>
+                <RadzenTabs TabPosition="TabPosition.Left" RenderMode="TabRenderMode.Client" >
+                    <Tabs>
+                        <RadzenTabsItem Text="Cadastro">
+                            <RegisterMotorcycle />
+                        </RadzenTabsItem>
+                        <RadzenTabsItem Text="Lista">
+                            <ListMotorcycles />
+                        </RadzenTabsItem>
+                    </Tabs>
+                </RadzenTabs>
+            </RadzenStack>
+        </Authorized>
+        <Authorizing>
+            <LoadingProgress />
+        </Authorizing>
+        <NotAuthorized>
+            <Forbidden />
+        </NotAuthorized>
+    </AuthorizeView>
+    <RadzenButton Click=@(args => Navigation.NavigateTo("/logout")) Text="Logout" ButtonStyle="ButtonStyle.Primary" Style="width: 200px;"/>
+</RadzenStack>

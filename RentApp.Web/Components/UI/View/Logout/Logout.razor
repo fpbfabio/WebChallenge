@@ -1,0 +1,32 @@
+@page "/logout"
+@attribute [AllowAnonymous]
+@using Microsoft.AspNetCore.Authentication
+@using Microsoft.AspNetCore.Authentication.Cookies
+@using Microsoft.AspNetCore.Authentication.OpenIdConnect
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Identity
+@using System.Security.Claims
+@inject NavigationManager NavManager
+
+<PageTitle>Signing out...</PageTitle>
+
+@code {
+    [CascadingParameter]
+    public HttpContext? HttpContext { get; set; }
+    [CascadingParameter]
+    public required Task<AuthenticationState> AuthenticationState { protected get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var state = await AuthenticationState;
+        ClaimsPrincipal authenticatedUser = state.User;
+        if (authenticatedUser is null || authenticatedUser.Identity is null || !authenticatedUser.Identity.IsAuthenticated)
+        {
+            NavManager.NavigateTo("/");
+            return;
+        }
+        await HttpContext!.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        await HttpContext!.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
+        HttpContext!.Session.Clear();
+    }
+}
