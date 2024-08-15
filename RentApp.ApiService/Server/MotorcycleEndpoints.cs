@@ -105,7 +105,7 @@ public static class MotorcycleEndpoints
                 return result;
             }
             motorcycleApiDataModel.LicensePlate = oldId;
-            motorcycleApiDataModel.ActiveUserlId = null;
+            motorcycleApiDataModel.ActiveUserId = null;
             bool rentalCleared = false;
             await client.PutMotorcycle(motorcycleApiDataModel, () =>
             {

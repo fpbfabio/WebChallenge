@@ -61,14 +61,14 @@ public static class RentalEndpoints
             }
             if (motorcycleApiDataModels is null
                 || motorcycleApiDataModels.Count == 0
-                || !motorcycleApiDataModels.Where(x => x.ActiveUserlId is null).Any())
+                || !motorcycleApiDataModels.Where(x => x.ActiveUserId is null).Any())
             {
                 result = TypedResults.BadRequest("Nenhuma motocicleta disponível");
                 Console.WriteLine("No available motorcycles");
                 return result;
             }
-            MotorcycleApiDataModel motorcycleApiDataModel = motorcycleApiDataModels.First(x => x.ActiveUserlId is null);
-            motorcycleApiDataModel.ActiveUserlId = userId;
+            MotorcycleApiDataModel motorcycleApiDataModel = motorcycleApiDataModels.First(x => x.ActiveUserId is null);
+            motorcycleApiDataModel.ActiveUserId = userId;
             await motorcycleApiClient.PutMotorcycle(motorcycleApiDataModel, () =>
             {
                 Console.WriteLine($"Motorcycle {motorcycleApiDataModel.LicensePlate} assigned to user {userId}");
@@ -96,12 +96,52 @@ public static class RentalEndpoints
     {
         app.MapPost(ENDPOINT + "/end/{rentalId}/{date}", async (string rentalId, int date) =>
         {
+            MotorcycleApiClient? motorcycleApiClient = app.Services.GetService<MotorcycleApiClient>();
             RentalApiClient? client = app.Services.GetService<RentalApiClient>();
             IResult result = TypedResults.Problem(detail: DEFAULT_ERROR_DETAIL);
-            if (client is null)
+            if (client is null || motorcycleApiClient is null)
             {
                 Console.WriteLine("RentalEndpoints: RentalApiClient is null");
                 return result;
+            }
+            string? userId = null;
+            await client.GetRental(rentalId, (rental) =>
+            {
+                userId = rental?.UserId;
+            }, (s) =>
+            {
+                result = TypedResults.Problem(detail: s);
+            });
+            if (userId is null)
+            {
+                Console.WriteLine("Could not identify rental user");
+                return result;
+            }
+            MotorcycleApiDataModel? motorcycleApiDataModel = null;
+            await motorcycleApiClient.GetMotorcycles((motorcycleApiDataModels) =>
+            {
+                motorcycleApiDataModel= motorcycleApiDataModels?.FirstOrDefault(x => x.ActiveUserId == userId);
+            }, (s) =>
+            {
+                result = TypedResults.Problem(detail: s);
+            });
+            if (motorcycleApiDataModel is not null)
+            {
+                bool error = false;
+                motorcycleApiDataModel.ActiveUserId = null;
+                await motorcycleApiClient.PutMotorcycle(motorcycleApiDataModel, () =>
+                {
+                    result = TypedResults.Ok();
+                }, (s) =>
+                {
+                    error = true;
+                    result = TypedResults.Problem(detail: s);
+                });
+                if (error)
+                {
+                    Console.WriteLine("Failed to deallocate motorcycle");
+                    return result;
+                }
             }
             await client.EndRental(rentalId, date, () =>
             {

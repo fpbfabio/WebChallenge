@@ -26,12 +26,20 @@ var app = builder.Build();
 app.UseExceptionHandler();
 
 app.MapGet(PATH, async (MotorcycleDb db) =>
-    await db.Items.ToListAsync());
+{
+    var databaseModels = await db.Items.ToListAsync();
+    if (databaseModels is null)
+    {
+        return [];
+    }
+    var apiDataModels = from x in databaseModels select ModelConverter.ToApiDataModel(x);
+    return apiDataModels;
+});
 
 app.MapGet(PATH + "/{id}", async (string id, MotorcycleDb db) =>
     await db.Items.FindAsync(id)
         is MotorcycleDatabaseModel motorcycle
-            ? Results.Ok(motorcycle)
+            ? Results.Ok(ModelConverter.ToApiDataModel(motorcycle))
             : Results.NotFound());
 
 app.MapPost(PATH, async (MotorcycleApiDataModel motorcycle, MotorcycleDb db) =>
@@ -50,7 +58,7 @@ app.MapPut(PATH, async (MotorcycleApiDataModel inputMotorcycle, MotorcycleDb db)
 
     motorcycle.Identifier = inputMotorcycle.Identifier;
     motorcycle.ModelName = inputMotorcycle.ModelName;
-    motorcycle.ActiveUserId = inputMotorcycle.ActiveUserlId;
+    motorcycle.ActiveUserId = inputMotorcycle.ActiveUserId;
     motorcycle.Year = inputMotorcycle.Year;
 
     await db.SaveChangesAsync();
@@ -70,6 +78,7 @@ app.MapDelete(PATH + "/{id}", async (string id, MotorcycleDb db) =>
         }
         else
         {
+            Console.WriteLine("Cannot delete, moto is rented to " + motorcycle.ActiveUserId);
             return TypedResults.BadRequest("A moto está alugada");
         }
     }

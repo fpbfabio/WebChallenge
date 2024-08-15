@@ -11,7 +11,8 @@ public static class ModelConverter
             Id = databaseModel.Id,
             PlanId = databaseModel.PlanId,
             StartDate = databaseModel.StartDate,
-            EndDate = databaseModel.EndDate
+            EndDate = databaseModel.EndDate,
+            UserId = databaseModel.UserId
         };
     }
 
@@ -21,6 +22,7 @@ public static class ModelConverter
             PlanId = dataModel.PlanId,
             StartDate = dataModel.StartDate,
             EndDate = dataModel.EndDate,
+            UserId = dataModel.UserId
         };
     }
 

@@ -13,7 +13,7 @@ public static class ModelConverter
             Identifier = databaseModel.Identifier,
             Year = databaseModel.Year,
             ModelName = databaseModel.ModelName,
-            ActiveUserlId = databaseModel.ActiveUserId
+            ActiveUserId = databaseModel.ActiveUserId
         };
     }
 
@@ -25,7 +25,7 @@ public static class ModelConverter
             Identifier = apiModel.Identifier,
             Year = apiModel.Year,
             ModelName = apiModel.ModelName,
-            ActiveUserId = apiModel.ActiveUserlId
+            ActiveUserId = apiModel.ActiveUserId
         };
     }
 

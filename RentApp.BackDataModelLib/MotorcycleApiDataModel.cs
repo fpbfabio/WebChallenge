@@ -6,5 +6,5 @@ public class MotorcycleApiDataModel
     public int Year { set; get; }
     public string? ModelName { set; get; }
     public string? LicensePlate { set; get; }
-    public string? ActiveUserlId { set; get; }
+    public string? ActiveUserId { set; get; }
 }
