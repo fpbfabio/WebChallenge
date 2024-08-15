@@ -15,11 +15,70 @@ public static class RentalEndpoints
     {
         app.MapPost(ENDPOINT + "/start/{userId}/{planId}", async (string userId, int planId) =>
         {
+            Console.WriteLine($"Starting rent: {userId} {planId}");
+            bool error = false;
             RentalApiClient? client = app.Services.GetService<RentalApiClient>();
+            MotorcycleApiClient? motorcycleApiClient = app.Services.GetService<MotorcycleApiClient>();
+            DriverApiClient? driverApiClient = app.Services.GetService<DriverApiClient>();
             IResult result = TypedResults.Problem(detail: DEFAULT_ERROR_DETAIL);
-            if (client is null)
+            if (client is null || motorcycleApiClient is null || driverApiClient is null)
             {
-                Console.WriteLine("RentalEndpoints: RentalApiClient is null");
+                Console.WriteLine("RentalEndpoints: null apiclients");
+                return result;
+            }
+            DriverProfile? profile = null;
+            await driverApiClient.GetProfile(userId, (driverProfile) =>
+            {
+                profile = driverProfile;
+            }, (s) =>
+            {
+                result = TypedResults.Problem(detail: s);
+                error = true;
+            });
+            if (error || profile is null)
+            {
+                return result;
+            }
+            Console.WriteLine($"User name: {profile.Name}");
+            if (profile.Category is null || !profile.Category.Contains('A'))
+            {
+                result = TypedResults.BadRequest("Usuário não é habilitado para categoria A");
+                return result;
+            }
+            Console.WriteLine($"Looking for motorcycles");
+            List<MotorcycleApiDataModel>? motorcycleApiDataModels = null;
+            await motorcycleApiClient.GetMotorcycles((motorcycles) =>
+            {
+                motorcycleApiDataModels = motorcycles;
+            }, (s) =>
+            {
+                result = TypedResults.Problem(detail: s);
+                error = true;
+            });
+            if (error)
+            {
+                return result;
+            }
+            if (motorcycleApiDataModels is null
+                || motorcycleApiDataModels.Count == 0
+                || !motorcycleApiDataModels.Where(x => x.ActiveUserlId is null).Any())
+            {
+                result = TypedResults.BadRequest("Nenhuma motocicleta disponível");
+                Console.WriteLine("No available motorcycles");
+                return result;
+            }
+            MotorcycleApiDataModel motorcycleApiDataModel = motorcycleApiDataModels.First(x => x.ActiveUserlId is null);
+            motorcycleApiDataModel.ActiveUserlId = userId;
+            await motorcycleApiClient.PutMotorcycle(motorcycleApiDataModel, () =>
+            {
+                Console.WriteLine($"Motorcycle {motorcycleApiDataModel.LicensePlate} assigned to user {userId}");
+            }, (s) =>
+            {
+                error = true;
+                result = TypedResults.Problem(detail: s);
+            });
+            if (error)
+            {
                 return result;
             }
             await client.StartNewRental(userId, planId, () =>

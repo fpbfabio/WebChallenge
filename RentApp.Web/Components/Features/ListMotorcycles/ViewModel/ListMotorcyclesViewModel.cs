@@ -81,7 +81,8 @@ public class ListMotorcyclesViewModel(IMotorcycleGateway motorcycleGateway) : Au
             Notify("Motorcycle deleted!");
         }, (s) =>
         {
-            Console.WriteLine("Editing motorcycle failed " + s);
+            Console.WriteLine("Notifying: Não é possível remover, a moto deve estar alugada");
+            Notify(s);
         });
     }
 }

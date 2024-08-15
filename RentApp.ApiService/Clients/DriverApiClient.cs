@@ -25,6 +25,24 @@ public class DriverApiClient(HttpClient httpClient)
         }
     }
 
+    public async Task GetProfile(
+        string id,
+        Action<DriverProfile?> onSuccess,
+        Action<string>? onError = null,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var response = await httpClient.GetFromJsonAsync<DriverProfile>($"{API_ENDPOINT}/{id}",
+                cancellationToken);
+            onSuccess(response);
+        }
+        catch (HttpRequestException exception)
+        {
+            onError?.Invoke(exception.ToString());
+        }
+    }
+
     public async Task RegisterDriverProfileAsync(
         DriverProfile driverProfile,
         Action onSuccess,

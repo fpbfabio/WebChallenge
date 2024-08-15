@@ -14,4 +14,6 @@ public class MotorcycleDatabaseModel
     public int Year { set; get; }
     [Column("model_name")]
     public string? ModelName { set; get; }
+    [Column("active_rental_id")]
+    public string? ActiveUserId { set; get; }
 }

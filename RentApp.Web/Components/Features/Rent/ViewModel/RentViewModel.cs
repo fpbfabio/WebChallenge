@@ -108,7 +108,10 @@ public class RentViewModel(
             userId: GetUserId(),
             planModel: Model.SelectedPlan,
             onSuccess: LoadRentalUI,
-            onError: (s) => Console.WriteLine());
+            onError: (s) => {
+                LoadRentalUI();
+                Notify(s);
+            });
     }
 
     private void UpdatePrice()

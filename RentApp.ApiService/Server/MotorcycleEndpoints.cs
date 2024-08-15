@@ -104,6 +104,20 @@ public static class MotorcycleEndpoints
             {
                 return result;
             }
+            motorcycleApiDataModel.LicensePlate = oldId;
+            motorcycleApiDataModel.ActiveUserlId = null;
+            bool rentalCleared = false;
+            await client.PutMotorcycle(motorcycleApiDataModel, () =>
+            {
+                rentalCleared = true;
+            }, (s) =>
+            {
+                result = TypedResults.Problem(detail: s);
+            });
+            if (!rentalCleared)
+            {
+                return result;
+            }
             await client.DeleteMotorcycle(oldId, () =>
             {
                 result = TypedResults.Ok();
@@ -128,7 +142,7 @@ public static class MotorcycleEndpoints
                     result = TypedResults.Ok();
                 }, (s) =>
                 {
-                    result = TypedResults.Problem(detail: s);
+                    result = TypedResults.BadRequest(s);
                 });
             }
             return result;

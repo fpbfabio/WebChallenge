@@ -89,16 +89,19 @@ public class MotorcycleRemoteDataSource(HttpClient httpClient)
         {
             var response = await httpClient.DeleteAsync(ENDPOINT + $"/{id}",
                 cancellationToken);
-            onResult();
-        }
-        catch (HttpRequestException exception)
-        {
-            if (exception.StatusCode == HttpStatusCode.NotFound)
+            if (response.IsSuccessStatusCode)
             {
                 onResult();
-                return;
             }
-            onError?.Invoke(exception.ToString());
+            else
+            {
+                Console.WriteLine("Não é possível remover, a moto deve estar alugada");
+                onError?.Invoke("Não é possível remover, a moto deve estar alugada");
+            }
+        }
+        catch (Exception)
+        {
+            onError?.Invoke("Não é possível remover, a moto deve estar alugada");
         }
     }
 }

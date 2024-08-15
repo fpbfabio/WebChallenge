@@ -21,14 +21,14 @@ public class RentalRemoteDataSource(HttpClient httpClient)
             {
                 onSuccess();
             }
-            else if (response.ReasonPhrase != null && onError != null)
+            else
             {
-                onError(response.ReasonPhrase);
+                onError?.Invoke("Não há motos disponíveis ou vc não tem a categoria A");
             }
         }
         catch (HttpRequestException exception)
         {
-            onError?.Invoke(exception.ToString());
+            onError?.Invoke(exception.ToString());            
         }
     }
 
