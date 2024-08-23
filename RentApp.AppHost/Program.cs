@@ -14,7 +14,8 @@ var apiService = builder.AddProject<Projects.RentApp_ApiService>("apiservice")
     .WithReference(motorcycleApiService);
 
 var keycloak = builder.AddKeycloak("keycloak", 8080)
-    .WithRealmImport("../realms");
+    .WithRealmImport("../realms")
+    .WithExternalHttpEndpoints();
 
 builder.AddProject<Projects.RentApp_Web>("webfrontend")
     .WithExternalHttpEndpoints()
